@@ -2,8 +2,6 @@
 #include "checksum.h"
 
 int createPDU(uint8_t * pduBuffer, uint32_t sequenceNumber, uint8_t flag, uint8_t * payload, int payloadLen){
-
-
 	uint32_t netsequence;	
        	uint16_t csum = 0;
     //    int  pduLenght= 0;

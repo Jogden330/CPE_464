@@ -12,7 +12,7 @@ OBJS = networks.o gethostbyname.o safeUtil.o UDP.o
 LIBS += libcpe464.2.21.a -lstdc++ -ldl
 CFLAGS += -D__LIBCPE464_
 
-all:  rcopy server
+all:  rcopy server test
 
 rcopy: rcopy.c $(OBJS) 
 	$(CC) $(CFLAGS) -o rcopy rcopy.c $(OBJS) $(LIBS)
@@ -20,8 +20,14 @@ rcopy: rcopy.c $(OBJS)
 server: server.c $(OBJS) 
 	$(CC) $(CFLAGS) -o server server.c  $(OBJS) $(LIBS)
 
+test: testwindows.c windows.o
+	$(CC) $(CFLAGS) -o  test  testwindows.c windows.o
+
 UDP.o: UDP.c UDP.h checksum.h  
 	$(CC) $(CFLAGS) -c UDP.c checksum.c
+
+windows.o: windows.c windows.h   
+	$(CC) $(CFLAGS) -c windows.c 
 
 %.o: %.c *.h 
 	gcc -c $(CFLAGS) $< -o $@ 

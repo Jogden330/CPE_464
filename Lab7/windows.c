@@ -85,11 +85,18 @@ Data * findPDU(serverWindow * window, uint32_t seqNum){
 
 void processRR(serverWindow * window, int RR){
 
-        int index;
-        index = RR % window->windowsize; 
-        free(window->PDUs[index]);
-        window->PDUs[index] = NULL;
-        window->lower = RR;
-        window->upper = window->lower + window->windowsize;
-        
+        int i;
+        for(i = 0; i <window->windowsize; i++){
+             if(window->PDUs[i]->seqNum < RR){
+        	free(window->PDUs[i]);
+       	        window->PDUs[i] = NULL;
+             }
+
+        }
+       // free(window->PDUs[index]);
+       // window->PDUs[index] = NULL;
+        if(window->lower < RR){
+            window->lower = RR;
+    	    window->upper = window->lower + window->windowsize;
+        }
 }

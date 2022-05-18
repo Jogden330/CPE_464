@@ -8,7 +8,7 @@ int readFromStdin(char * buffer);
 int main(int argc, char * argv[]){
 
  serverWindow * window;
- window = window_init(3); 
+ window = window_init(4); 
  int datalen;
  uint32_t seqNum =  0;
  int RR = 0;
@@ -20,11 +20,8 @@ int main(int argc, char * argv[]){
 
     if(isOpen(window)){
        datalen = readFromStdin(buffer);
-  //     printf("datalen %d\n", datalen);
        len = createPDU(pduBuffer, seqNum++, 3,(uint8_t *) buffer , datalen);
-    //   printf("len %d\n", len);
        addPDUtoWindow(window, pduBuffer, len+1);
-     //  printf("done adding to window\n");
        printServerWindow_metadata(window);
        window->current++;
               

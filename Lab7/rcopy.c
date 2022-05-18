@@ -18,10 +18,12 @@
 #include "gethostbyname.h"
 #include "networks.h"
 #include "safeUtil.h"
+#include "UDP.h"
+#include "cpe464.h"
 
-#define MAXBUF 80
+#define MAXBUF 1400 
 
-void talkToServer(int socketNum, struct sockaddr_in6 * server);
+void talkToServer(int socketNum, double error, struct sockaddr_in6 * server);
 int readFromStdin(char * buffer);
 int checkArgs(int argc, char * argv[]);
 
@@ -31,37 +33,59 @@ int main (int argc, char *argv[])
 	int socketNum = 0;				
 	struct sockaddr_in6 server;		// Supports 4 and 6 but requires IPv6 struct
 	int portNumber = 0;
+        double error = 0;
 	
 	portNumber = checkArgs(argc, argv);
-	
-	socketNum = setupUdpClientToServer(&server, argv[1], portNumber);
-	
-	talkToServer(socketNum, &server);
+	error = atof(argv[1]);
+        if(error < 0 || error > 1){
+             printf("invaled error must be 0 to 1\n");
+             close(-1);
+        }
+        sendtoErr_init(error, DROP_ON, FLIP_OFF, DEBUG_ON, RSEED_ON);
+	socketNum = setupUdpClientToServer(&server, argv[2], portNumber);
+
+	talkToServer(socketNum, error, &server);
 	
 	close(socketNum);
 
 	return 0;
 }
 
-void talkToServer(int socketNum, struct sockaddr_in6 * server)
+void talkToServer(int socketNum, double error,struct sockaddr_in6 * server)
 {
 	int serverAddrLen = sizeof(struct sockaddr_in6);
 	char * ipString = NULL;
 	int dataLen = 0; 
 	char buffer[MAXBUF+1];
+        uint8_t pduBuffer[MAXBUF + 8];
+        int PDUlen;
+        uint32_t seqNum = 0;
+        uint8_t flag = 3; 
 	
 	buffer[0] = '\0';
+         
 	while (buffer[0] != '.')
 	{
 		dataLen = readFromStdin(buffer);
+                PDUlen =  createPDU(pduBuffer, seqNum++, flag,(uint8_t *) buffer, dataLen);
+               
 
-		printf("Sending: %s with len: %d\n", buffer,dataLen);
+	//	printf("Sending: %s with len: %d\n", buffer,dataLen);
+	        outputPDU(pduBuffer, PDUlen);
 	
-		safeSendto(socketNum, buffer, dataLen, 0, (struct sockaddr *) server, serverAddrLen);
+		//safeSendto(socketNum, pduBuffer, PDUlen, 0, (struct sockaddr *) server, serverAddrLen);
 		
-		safeRecvfrom(socketNum, buffer, MAXBUF, 0, (struct sockaddr *) server, &serverAddrLen);
+//ssize_t sendtoErr(int s, void *msg, int len, unsigned int flags,
+  //            const struct sockaddr *to, int tolen)
+
+                 sendtoErr(socketNum, pduBuffer, PDUlen,  flag,  (struct sockaddr *) server, serverAddrLen);
+
+              //  ssize_t sendtoErr(int s, void *msg, int len, unsigned int flags,
+	//	sendtoErr(socketNum, pduBuffer, PDUlen, 0, (struct sockaddr *) server, serverAddrLen);
+		PDUlen = safeRecvfrom(socketNum, pduBuffer, MAXBUF, 0, (struct sockaddr *) server, &serverAddrLen);
 		
-		// print out bytes received
+	        outputPDU(pduBuffer, PDUlen);
+		// print out bytes received:
 		ipString = ipAddressToString(server);
 		printf("Server with ip: %s and port %d said it received %s\n", ipString, ntohs(server->sin6_port), buffer);
 	      
@@ -99,13 +123,13 @@ int checkArgs(int argc, char * argv[])
         int portNumber = 0;
 	
         /* check command line arguments  */
-	if (argc != 3)
+	if (argc != 4)
 	{
-		printf("usage: %s host-name port-number \n", argv[0]);
+		printf("usage: %s error-persentage hoso-name port-number \n", argv[0]);
 		exit(1);
 	}
 	
-	portNumber = atoi(argv[2]);
+	portNumber = atoi(argv[3]);
 		
 	return portNumber;
 }

@@ -197,24 +197,3 @@ int setupUdpClientToServer(struct sockaddr_in6 *serverAddress, char * hostName, 
 	return socketNum;
 }
 
-int createPDU(uint8_t * pduBuffer, unit32_t sequenceNumber, unint_8 flag, unit8_t * payload, int payloadLen){
-        netsequence;
-        cheaksum = 0;
-        
-        
-	sequenceNumber++;
-        netsequence =  htonl(sequenceNumber);
-        memcopy(bpuBuffer, &netsequence, sizeof(uint32_t)); 
-        memcopy(bpuBuffer[4], &cheaksum, sizeof(uint16_t)); 
-            
-        memcopy(pduBuffer[6], &flag, sizeof(unit8_t);
-        memcopy(pduBuffer[7], payload, payloadLen);
-        checksum = in_cksum((unsined short int *)pduBuffer, paylaodLen + 8);
-        
-        memcopy(bpuBuffer[4], &cheaksum, sizeof(uint16_t)); 
-                
-
-        return pduLenght; 
-
-
-}

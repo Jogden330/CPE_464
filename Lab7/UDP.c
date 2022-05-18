@@ -18,7 +18,7 @@ int createPDU(uint8_t * pduBuffer, uint32_t sequenceNumber, uint8_t flag, uint8_
 
 	memcpy(&pduBuffer[4], &csum, sizeof(uint16_t));
 
-
+        printf("made the pdu\n");
 	return 	payloadLen + 7;
  }
 
@@ -33,7 +33,7 @@ void outputPDU(uint8_t * pduBuffer,int PDUlen){
         
         memcpy(&csum,&pduBuffer[4], sizeof(uint16_t));
         memcpy(&flag,&pduBuffer[6], sizeof(uint8_t));
-
+        seqNum = ntohl(seqNum);
         printf("Seqence Number is %d\n", seqNum);
        
 	csum = in_cksum((unsigned short int *)pduBuffer, PDUlen);

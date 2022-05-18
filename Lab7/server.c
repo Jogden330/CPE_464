@@ -26,7 +26,7 @@ int main ( int argc, char *argv[]  )
 	int portNumber = 0;
         double error = 0;
 	portNumber = checkArgs(argc, argv);
-        error = atof(argv[2]);
+        error = atof(argv[1]);
         if(error < 0 || error > 1){
              printf("Error rate must be bettween 0 and 1\n");
              close(-1);
@@ -59,18 +59,11 @@ void processClient(int socketNum, double error)
 		dataLen = safeRecvfrom(socketNum, pduBuffer, MAXBUF, 0, (struct sockaddr *) &client, &clientAddrLen);
                         
 	
-	        outputPDU(pduBuffer, dataLen);
 		printf("Received message from client with ");
+	        outputPDU(pduBuffer, dataLen);
 		printIPInfo(&client);
-	//	printf(" Len: %d \'%s\'\n", dataLen, buffer);
-
-		// just for fun send back to client number of bytes received
-		sprintf(buffer, "bytes: %d", dataLen);
-                
-                PDUlen =  createPDU(pduBuffer, seqNum++, flag,(uint8_t *) buffer, dataLen);
-		sendtoErr(socketNum, buffer, strlen(buffer)+1, 0, (struct sockaddr *) & client, clientAddrLen);
-
-	        outputPDU(pduBuffer, PDUlen);
+		safeSendto(socketNum, pduBuffer, dataLen, 0, (struct sockaddr *) & client, clientAddrLen);
+                printf("sent to client\n");
 
 	}
 }

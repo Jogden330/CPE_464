@@ -70,20 +70,14 @@ void talkToServer(int socketNum, double error,struct sockaddr_in6 * server)
                 PDUlen =  createPDU(pduBuffer, seqNum++, flag,(uint8_t *) buffer, dataLen);
                
 
-	//	printf("Sending: %s with len: %d\n", buffer,dataLen);
 	        outputPDU(pduBuffer, PDUlen);
 	
-		//safeSendto(socketNum, pduBuffer, PDUlen, 0, (struct sockaddr *) server, serverAddrLen);
 		
-//ssize_t sendtoErr(int s, void *msg, int len, unsigned int flags,
-  //            const struct sockaddr *to, int tolen)
 
-                 sendtoErr(socketNum, pduBuffer, PDUlen,  flag,  (struct sockaddr *) server, serverAddrLen);
-
-              //  ssize_t sendtoErr(int s, void *msg, int len, unsigned int flags,
-	//	sendtoErr(socketNum, pduBuffer, PDUlen, 0, (struct sockaddr *) server, serverAddrLen);
-		PDUlen = safeRecvfrom(socketNum, pduBuffer, MAXBUF, 0, (struct sockaddr *) server, &serverAddrLen);
-		
+               safeSendto(socketNum, pduBuffer, PDUlen,  flag,  (struct sockaddr *) server, serverAddrLen);
+   
+		PDUlen = safeRecvfrom(socketNum, pduBuffer, MAXBUF+7, 0, (struct sockaddr *) server, &serverAddrLen);
+                printf("receved from server /n");		
 	        outputPDU(pduBuffer, PDUlen);
 		// print out bytes received:
 		ipString = ipAddressToString(server);

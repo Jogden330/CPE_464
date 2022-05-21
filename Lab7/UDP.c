@@ -16,7 +16,7 @@ int createPDU(uint8_t * pduBuffer, uint32_t sequenceNumber, uint8_t flag, uint8_
 
 	memcpy(&pduBuffer[4], &csum, sizeof(uint16_t));
 
-        printf("made the pdu\n");
+//        printf("made the pdu\n");
 	return 	payloadLen + 7;
  }
 

@@ -14,12 +14,15 @@ int main(int argc, char * argv[]){
  int RR = 0;
  int len;
  char buffer[MAXBUF];
-
+ int i;
  uint8_t pduBuffer[MAXBUF];
  while(1){
 
     if(isOpen(window)){
-       datalen = readFromStdin(buffer);
+       datalen += 20;
+       for(i = 0; i < datalen; i++){
+           pduBuffer[i] = (rand() %100 )+1;
+       }
        len = createPDU(pduBuffer, seqNum++, 3,(uint8_t *) buffer , datalen);
        addPDUtoWindow(window, pduBuffer, len+1);
        printServerWindow_metadata(window);
@@ -32,6 +35,7 @@ int main(int argc, char * argv[]){
        printServerWindow_metadata(window);
        printf("Enter Number to RR: ");
        scanf("%d",&RR);
+       fflush(stdin);
        //RR the sequence number 
        processRR(window, RR);
        printEntireWindow(window);
@@ -44,28 +48,4 @@ int main(int argc, char * argv[]){
  }
 
  return 0;
-}
-int readFromStdin(char * buffer)
-{
-	char aChar = 0;
-	int inputLen = 0;        
-	
-	// Important you don't input more characters than you have space 
-	buffer[0] = '\0';
-	printf("Enter data: ");
-	while (inputLen < (MAXBUF - 1) && aChar != '\n')
-	{
-		aChar = getchar();
-		if (aChar != '\n')
-		{
-			buffer[inputLen] = aChar;
-			inputLen++;
-		}
-	}
-	
-	// Null terminate the string
-	buffer[inputLen] = '\0';
-	inputLen++;
-	
-	return inputLen;
 }

@@ -20,14 +20,14 @@ rcopy: rcopy.c $(OBJS)
 server: server.c $(OBJS) 
 	$(CC) $(CFLAGS) -o server server.c  $(OBJS) $(LIBS)
 
-test: testwindows.c windows.o
-	$(CC) $(CFLAGS) -o  test  testwindows.c windows.o
+test: testWindows.c windows.o UDP.o 
+	$(CC) -o test $(CFLAGS) testWindows.c windows.o UDP.o $(LIBS)
 
 UDP.o: UDP.c UDP.h checksum.h  
-	$(CC) $(CFLAGS) -c UDP.c checksum.c
+	$(CC) $(CFLAGS) -c UDP.c 
 
-windows.o: windows.c windows.h   
-	$(CC) $(CFLAGS) -c windows.c 
+windows.o: windows.c windows.h checksum.h  
+	$(CC) $(CFLAGS) -c windows.c
 
 %.o: %.c *.h 
 	gcc -c $(CFLAGS) $< -o $@ 

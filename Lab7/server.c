@@ -32,7 +32,7 @@ int main ( int argc, char *argv[]  )
              close(-1);
         }
 
-        sendtoErr_init(error, DROP_ON, FLIP_OFF, DEBUG_ON, RSEED_ON);
+        sendtoErr_init(error, DROP_OFF, FLIP_ON, DEBUG_ON, RSEED_ON);
 	socketNum = udpServerSetup(portNumber);
 
 	processClient(socketNum, error);
@@ -49,9 +49,6 @@ void processClient(int socketNum, double error)
 	struct sockaddr_in6 client;		
 	int clientAddrLen = sizeof(client);	
         uint8_t pduBuffer[MAXBUF + 8];
-        int PDUlen;
-        uint32_t seqNum = 0;
-        uint8_t flag = 3; 
 
 	buffer[0] = '\0';
 	while (buffer[0] != '.')

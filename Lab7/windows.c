@@ -52,12 +52,12 @@ void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size){
       seqNum = ntohl(seqNum);
  
       index = seqNum % window->windowsize; 
-      printf("index %d\n", index);
-      printf("window size %d\n", window->windowsize); 
+   //   printf("index %d\n", index);
+   //   printf("window size %d\n", window->windowsize); 
       data->seqNum = seqNum;
       data->size = size;
+   //   printf("size of data %d\n", size);
       data->index = index;
-      data->valflag = 1;
       data->pdu = pduBuff;    
     
          

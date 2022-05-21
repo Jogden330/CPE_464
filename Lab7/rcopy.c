@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
              printf("invaled error must be 0 to 1\n");
              close(-1);
         }
-        sendtoErr_init(error, DROP_ON, FLIP_OFF, DEBUG_ON, RSEED_ON);
+        sendtoErr_init(error, DROP_OFF, FLIP_ON, DEBUG_ON, RSEED_ON);
 	socketNum = setupUdpClientToServer(&server, argv[2], portNumber);
 
 	talkToServer(socketNum, error, &server);

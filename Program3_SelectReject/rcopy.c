@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
    check_args(argc, argv);
    
-   sendtoErr_init(atof(argv[5],DROP_ON, FLIP_ON, DEBUG_ON, RSEED_ON);
+   sendtoErr_init(atof(argv[5]),DROP_ON, FLIP_ON, DEBUG_ON, RSEED_ON);
    
    processFile(argv);
 
@@ -123,7 +123,7 @@ STATE start_state(char **argv, Connection *server, uint32_t *clientSeqNum)
    return returnValue;
 }
 
-STATE filename(char *fname, int32_t buf_size, Connection *server, serverWindow * window)
+STATE filename(char *fname, int32_t buf_size, Connection *server)
 {
    // Send the file name, get response
    // return START if no reply from server, DONE if bad filename, FILE_OK otherwise
@@ -134,23 +134,23 @@ STATE filename(char *fname, int32_t buf_size, Connection *server, serverWindow *
    int32_t recv_check = 0;
    static int retryCount = 0;
 
-   while(){
- 	 if ((returnValue = processSelect(server, &retryCount, START_STATE, FILE_OK, DONE)) == FILE_OK)
-  	 {
-     		 recv_check = recv_buf(packet, MAX_LEN, server->sk_num, server, &flag, &seq_num);
-      		// check for bit flip 
-     		 if (recv_check == CRC_ERROR)
-      		   returnValue = START_STATE;
-    		 else if(flag == FNAME_BAD)   
-      		{
-        		 printf("File %s not found\n", fname);
-      			 returnValue = DONE;
-      		}
+   
+  if ((returnValue = processSelect(server, &retryCount, START_STATE, FILE_OK, DONE)) == FILE_OK)
+  {
+ 	 recv_check = recv_buf(packet, MAX_LEN, server->sk_num, server, &flag, &seq_num);
+         // check for bit flip 
+     	 if (recv_check == CRC_ERROR)
+      	   returnValue = START_STATE;
+    	 else if(flag == FNAME_BAD)   
+      	{
+        	 printf("File %s not found\n", fname);
+      		 returnValue = DONE;
+      	}
 
-    		 else if(flag == DATA)
-        		eturnValue = FILE_OK; // file yes/no packet lost - instead its a data packet
+    	 else if(flag == DATA)
+        	returnValue = FILE_OK; // file yes/no packet lost - instead its a data packet
       
-  	 }
+  }
 
    return (returnValue);
 }

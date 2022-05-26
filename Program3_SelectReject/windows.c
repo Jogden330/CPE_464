@@ -40,27 +40,17 @@ void printEntireWindow(serverWindow * window){
 
 }
 
-void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size){
+void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size, uint32_t seqNum){
 
-      uint32_t seqNum;
       int index;
       Data * data;
       data = malloc(sizeof(Data));
-  
-      memcpy(&seqNum, pduBuff, sizeof(uint32_t));
-
-      seqNum = ntohl(seqNum);
  
       index = seqNum % window->windowsize; 
-   //   printf("index %d\n", index);
-   //   printf("window size %d\n", window->windowsize); 
       data->seqNum = seqNum;
       data->size = size;
-   //   printf("size of data %d\n", size);
       data->index = index;
       data->pdu = pduBuff;    
-    
-         
      
       window->PDUs[index] = data;
 }
@@ -93,8 +83,6 @@ void processRR(serverWindow * window, int RR){
              }
 
         }
-       // free(window->PDUs[index]);
-       // window->PDUs[index] = NULL;
         if(window->lower < RR){
             window->lower = RR;
     	    window->upper = window->lower + window->windowsize;

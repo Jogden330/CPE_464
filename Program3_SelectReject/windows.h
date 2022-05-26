@@ -40,7 +40,7 @@ void printServerWindow_metadata(serverWindow * window);
 void printEntireWindow(serverWindow * window);
 
 
-void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size);
+void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size, uint32_t seqNum);
 
 
 void processRR(serverWindow * window, int RR);

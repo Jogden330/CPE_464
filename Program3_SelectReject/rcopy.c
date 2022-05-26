@@ -170,7 +170,7 @@ STATE file_ok(int *outputFileFd, char *outputFileName)
 
 }
 
-STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum)
+STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum, serverWindow * windows)
 {
    uint32_t seq_num = 0; 
    uint32_t ackSeqNum = 0; 
@@ -215,6 +215,9 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum)
    {
       expected_seq_num++;
       write(output_file, &data_buf, data_len);
+   } else {
+      
+	 addPDUtoWindow(windows, data_buf, data_len,  seq_num);
    }
 
    return RECV_DATA;

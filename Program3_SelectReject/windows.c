@@ -1,11 +1,11 @@
 #include "windows.h"
 
 
-serverWindow * window_init(int windowsize ){
+clientWindow * window_init(int windowsize ){
      
 
     Data ** data = malloc(sizeof(Data*)*windowsize);
-    serverWindow * window= malloc(sizeof(serverWindow));
+    clientWindow * window= malloc(sizeof(clientWindow));
    
     window->upper = windowsize;
     window->lower = 0;
@@ -17,12 +17,12 @@ serverWindow * window_init(int windowsize ){
 
 }
 
-void printServerWindow_metadata(serverWindow * window){
+void printServerWindow_metadata(clientWindow * window){
     printf("windowsize %d, current %d, lower %d, upper %d\n", window->windowsize, window->current, window->lower, window->upper);
 
 }
 
-void printEntireWindow(serverWindow * window){
+void printEntireWindow(clientWindow * window){
 
  int i;
  
@@ -40,7 +40,7 @@ void printEntireWindow(serverWindow * window){
 
 }
 
-void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size, uint32_t seqNum){
+void addToWindow(clientWindow * window, uint8_t * pduBuff, int size, uint32_t seqNum){
 
       int index;
       Data * data;
@@ -55,7 +55,7 @@ void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size, uint32_t
       window->PDUs[index] = data;
 }
 
-int isOpen(serverWindow * window){
+int isOpen(clientWindow * window){
   if( window->upper >  window->current){
 	return 1;
   } 
@@ -63,7 +63,7 @@ int isOpen(serverWindow * window){
 
 }
 
-Data * findPDU(serverWindow * window, uint32_t seqNum){
+Data * findPDU(clientWindow * window, uint32_t seqNum){
          
 	int index = 0;        
         index = seqNum % window->windowsize; 
@@ -73,7 +73,7 @@ Data * findPDU(serverWindow * window, uint32_t seqNum){
 
 }
 
-void processRR(serverWindow * window, int RR){
+void processRR(clientWindow * window, int RR){
 
         int i;
         for(i = 0; i <window->windowsize; i++){
@@ -86,5 +86,5 @@ void processRR(serverWindow * window, int RR){
         if(window->lower < RR){
             window->lower = RR;
     	    window->upper = window->lower + window->windowsize;
-        }
+	}      
 }

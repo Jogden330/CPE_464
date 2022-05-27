@@ -33,7 +33,7 @@ enum State
 void processFile(char *argv[]);
 STATE start_state(char **argv, Connection *server, uint32_t *clientSeqNum);
 STATE filename(char *fname, int32_t buf_size, Connection *server);
-STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,  serverWindow * window);
+STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,  clientWindow * window);
 STATE file_ok(int *outputFileFd, char *outputFileName);
 void check_args(int argc, char **argv);
 
@@ -53,7 +53,7 @@ void processFile(char *argv[])
 {
    // argv needed to get file names , server name and server port number 
    
-   serverWindow * window; 	
+   clientWindow * window; 	
    Connection *server = (Connection *)calloc(1, sizeof(Connection));
    uint32_t clientSeqNum = 0;
    int32_t output_file_fd = 0;
@@ -170,7 +170,7 @@ STATE file_ok(int *outputFileFd, char *outputFileName)
 
 }
 
-STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum, serverWindow * windows)
+STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum, clientWindow * windows)
 {
    uint32_t seq_num = 0; 
    uint32_t ackSeqNum = 0; 
@@ -217,7 +217,7 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,
       write(output_file, &data_buf, data_len);
    } else {
       
-	 addPDUtoWindow(windows, data_buf, data_len,  seq_num);
+	 addToWindow(windows, data_buf, data_len,  seq_num);
    }
 
    return RECV_DATA;

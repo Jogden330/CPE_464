@@ -12,14 +12,14 @@
 #include <netdb.h>
 #include <stdint.h>
 
-typedef struct serverWindow{
+typedef struct clientWindow{
 	int lower;
         int current;
         int upper;
         int windowsize;
         struct Data ** PDUs;    
 
-} serverWindow;
+} clientWindow;
 
 typedef struct Data{
 	int valflag;
@@ -31,22 +31,22 @@ typedef struct Data{
 } Data;
 
 
-serverWindow * window_init(int windowsize );
+clientWindow * window_init(int windowsize );
 
 
-void printServerWindow_metadata(serverWindow * window);
+void printServerWindow_metadata(clientWindow * window);
 
 
-void printEntireWindow(serverWindow * window);
+void printEntireWindow(clientWindow * window);
 
 
-void addPDUtoWindow(serverWindow * window, uint8_t * pduBuff, int size, uint32_t seqNum);
+void addToWindow(clientWindow * window, uint8_t * pduBuff, int size, uint32_t seqNum);
 
 
-void processRR(serverWindow * window, int RR);
+void processRR(clientWindow * window, int RR);
 
 
-int isOpen(serverWindow * window);
+int isOpen(clientWindow * window);
 
 
 

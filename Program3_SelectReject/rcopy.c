@@ -73,13 +73,11 @@ void processFile(char *argv[])
          case FILE_OK:
             state = file_ok(&output_file_fd, argv[2]);
             break;
-
          case RECV_DATA:
             state = recv_data(output_file_fd, server, &clientSeqNum, window);
             break;
          case DONE:
             break;
-
          default:
             printf("ERROR - in default state\n");
             break;
@@ -175,6 +173,7 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,
    uint32_t seq_num = 0; 
    uint32_t ackSeqNum = 0; 
    uint8_t flag = 0; 
+   uint8_t srej_num = 0;
    int32_t data_len = 0; 
    uint8_t data_buf[MAX_LEN];
    uint8_t packet[MAX_LEN];
@@ -213,7 +212,7 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,
    if (seq_num <= expected_seq_num)
    {
 
-      send_buf((uint8_t *)&ackSeqNum, sizeof(ackSeqNum), server, ACK, *clientSeqNum, packet);
+      send_buf((uint8_t *)&ackSeqNum, sizeof(ackSeqNum), server, RR, *clientSeqNum, packet);
     
       if(seq_num <= expected_seq_num){
      	 expected_seq_num++;
@@ -222,7 +221,9 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,
 
    } else if ( seq_num > expected_seq_num )
    {
-         //send SERJ for expected_seq_num 
+         //send SERJ for expected_seq_num
+	 srej_num = htonl(seq_num);
+         send_buf((uint8_t *)&ackSeqNum, sizeof(srej_num), server, SREJ, *clientSeqNum, packet);
 	 addToWindow(windows, data_buf, data_len,  seq_num);
    } 
 

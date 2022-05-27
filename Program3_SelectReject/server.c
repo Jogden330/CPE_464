@@ -217,7 +217,7 @@ STATE wait_on_ack(Connection * client)
         {
             returnValue = WAIT_ON_ACK;
         }
-        else if(flag != ACK)
+        else if(flag != RR)
         {
             printf("I wait_on_ack but its not an ACK flag (this should never happen) is: %d\n", flag);
             returnValue = DONE;

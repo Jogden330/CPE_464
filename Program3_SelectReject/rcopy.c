@@ -206,19 +206,25 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,
    {
       // send ACK
       ackSeqNum = htonl(seq_num);
-      send_buf((uint8_t *)&ackSeqNum, sizeof(ackSeqNum), server, ACK, *clientSeqNum, packet);
       (*clientSeqNum)++;
 
    }
 
-   if (seq_num == expected_seq_num)
+   if (seq_num <= expected_seq_num)
    {
-      expected_seq_num++;
-      write(output_file, &data_buf, data_len);
-   } else {
-      
+
+      send_buf((uint8_t *)&ackSeqNum, sizeof(ackSeqNum), server, ACK, *clientSeqNum, packet);
+    
+      if(seq_num <= expected_seq_num){
+     	 expected_seq_num++;
+     	 write(output_file, &data_buf, data_len);
+      }
+
+   } else if ( seq_num > expected_seq_num )
+   {
+         //send SERJ for expected_seq_num 
 	 addToWindow(windows, data_buf, data_len,  seq_num);
-   }
+   } 
 
    return RECV_DATA;
    

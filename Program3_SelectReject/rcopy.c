@@ -68,7 +68,7 @@ void processFile(char *argv[])
             state = start_state(argv, server, &clientSeqNum);
             break;
          case FILENAME:
-            state = filename(argv[1], atoi(argv[3]), server);
+            state = filename(argv[1], atoi(argv[4]), server);
             break;
          case FILE_OK:
             state = file_ok(&output_file_fd, argv[2]);
@@ -102,12 +102,12 @@ STATE start_state(char **argv, Connection *server, uint32_t *clientSeqNum)
    if (server->sk_num > 0)
       close(server->sk_num);
    
-   if(udpClientSetup(argv[5], atoi(argv[6]), server ) < 0)
+   if(udpClientSetup(argv[6], atoi(argv[7]), server ) < 0)
       returnValue =  DONE; // error creating socket to server 
    else
    {
-      // put in buffer size (for sending data) and filename 
-      bufferSize = htonl(atoi(argv[3]));
+      // put in buffer size (for snding data) and filename 
+      bufferSize = htonl(atoi(argv[4]));
       memcpy(buf, &bufferSize, SIZE_OF_BUF_SIZE);
       memcpy(&buf[SIZE_OF_BUF_SIZE], argv[1], fileNameLen);
       printf("send the file named %s length %d\n", argv[1], fileNameLen);
@@ -243,7 +243,14 @@ void check_args(int argc, char **argv)
       printf("TO filename to long needs to be less than 1000 and is: %ld\n", strlen(argv[1]));
       exit(EXIT_FAILURE);
    }
-   if (atoi(argv[4]) < 400 || atoi(argv[3]) > 1400)
+
+   if (atoi(argv[3]) < 0)
+   {
+      printf("window size must be greater the zero: %ld\n", strlen(argv[3]));
+      exit(EXIT_FAILURE);
+   }
+   
+   if (atoi(argv[4]) < 400 || atoi(argv[4]) > 1400)
    {
       printf("Buffer size needs to be between 400 and 1400 and is: %d\n", atoi(argv[3]));
       exit(EXIT_FAILURE);

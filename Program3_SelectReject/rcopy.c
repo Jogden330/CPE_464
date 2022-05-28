@@ -215,10 +215,16 @@ STATE recv_data(int32_t output_file, Connection *server, uint32_t *clientSeqNum,
       send_buf((uint8_t *)&ackSeqNum, sizeof(ackSeqNum), server, RR, *clientSeqNum, packet);
    
       if(seq_num == expected_seq_num){
-     	 expected_seq_num++;
+     	
+	 expected_seq_num++;
      	 write(output_file, &data_buf, data_len);
+	
 	 if(!isEmpty(windows)){
-
+		while((data_len = findPDU(windows, data_buf,expected_seq_num)) != -1 ){
+		        	
+     	 		write(output_file, &data_buf, data_len);
+     	 		expected_seq_num++;
+		}
 	 }
       }
 

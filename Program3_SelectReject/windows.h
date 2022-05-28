@@ -46,8 +46,10 @@ void addToWindow(clientWindow * window, uint8_t * pduBuff, int size, uint32_t se
 void processRR(clientWindow * window, int RR);
 
 
+int findPDU(clientWindow * window, uint8_t * pduBuff, uint32_t seqNum);
+
 int isOpen(clientWindow * window);
 
-
+int isEmpty(clientWindow * window);
 
 #endif

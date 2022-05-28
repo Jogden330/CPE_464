@@ -3,7 +3,7 @@
 
 clientWindow * window_init(int windowsize ){
      
-
+    int i;
     Data ** data = malloc(sizeof(Data*)*windowsize);
     clientWindow * window= malloc(sizeof(clientWindow));
    
@@ -13,6 +13,9 @@ clientWindow * window_init(int windowsize ){
     window->windowsize = windowsize;
     window->PDUs = data;
  
+    for(i = 0; i < window->windowsize; i++){
+	data[i] = NULL;
+    }
     return window;
 
 }
@@ -63,12 +66,27 @@ int isOpen(clientWindow * window){
 
 }
 
-Data * findPDU(clientWindow * window, uint32_t seqNum){
-         
+int isEmpty(clientWindow * window){
+  if( window->lower ==  window->current)
+	return 1;
+  return 0;
+
+}
+
+int findPDU(clientWindow * window, uint8_t * pduBuff, uint32_t seqNum){
+	
+	Data * data;
 	int index = 0;        
         index = seqNum % window->windowsize; 
 
-	return  window->PDUs[index];
+	 
+	data =  window->PDUs[index];
+        if(data == NULL)
+		return -1;
+
+	memcpy(pduBuff, data->pdu, data->size);
+
+	return data->size;
 
 
 }
